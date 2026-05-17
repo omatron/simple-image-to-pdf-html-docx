@@ -15,6 +15,7 @@ from docx.oxml import OxmlElement as DocxEl
 st.set_page_config(page_title="Image to A4 Organizer", layout="wide")
 
 
+
 # ── helpers ────────────────────────────────────────────────────────────────────
 
 def fix_orientation(img):
@@ -22,6 +23,12 @@ def fix_orientation(img):
         return ImageOps.exif_transpose(img)
     except Exception:
         return img
+
+
+def strip_metadata(img):
+    clean = img.copy()
+    clean.info = {}
+    return clean
 
 
 def compress_image(img, level):
@@ -51,7 +58,7 @@ def grid_shape(ipp):
 
 # ── generators ─────────────────────────────────────────────────────────────────
 
-def generate_pdf(images, ipp, comp):
+def generate_pdf(images, ipp, comp, do_strip=True):
     buf = io.BytesIO()
     c = rl_canvas.Canvas(buf, pagesize=A4)
     pw, ph = A4
@@ -66,6 +73,8 @@ def generate_pdf(images, ipp, comp):
 
         for idx, img in enumerate(batch):
             img = fix_orientation(img)
+            if do_strip:
+                img = strip_metadata(img)
             if comp:
                 img = compress_image(img, comp)
 
@@ -87,7 +96,7 @@ def generate_pdf(images, ipp, comp):
     return buf.read()
 
 
-def generate_html(images, ipp, comp):
+def generate_html(images, ipp, comp, do_strip=True):
     cols, rows = grid_shape(ipp)
     pages = []
 
@@ -96,6 +105,8 @@ def generate_html(images, ipp, comp):
         cells = []
         for img in batch:
             img = fix_orientation(img)
+            if do_strip:
+                img = strip_metadata(img)
             if comp:
                 img = compress_image(img, comp)
             b64 = base64.b64encode(to_jpeg_buf(img).read()).decode()
@@ -147,7 +158,7 @@ def generate_html(images, ipp, comp):
 </html>"""
 
 
-def generate_docx(images, ipp, comp):
+def generate_docx(images, ipp, comp, do_strip=True):
     def _no_borders(table):
         tbl = table._tbl
         tblPr = tbl.tblPr
@@ -225,6 +236,8 @@ def generate_docx(images, ipp, comp):
 
         for idx, img in enumerate(batch):
             img = fix_orientation(img)
+            if do_strip:
+                img = strip_metadata(img)
             if comp:
                 img = compress_image(img, comp)
             col, row = idx % cols_n, idx // cols_n
@@ -260,18 +273,20 @@ with st.sidebar:
 
     # Compression
     st.subheader("Compression")
-    enable_comp = st.checkbox("Enable Compression")
+    enable_comp = st.checkbox("Enable Compression", value=True)
     comp_level = None
     if enable_comp:
         comp_level = st.radio(
             "Level",
             ["Low", "Medium", "High"],
+            index=1,
             captions=["High quality, larger file", "Balanced", "Small file, lower quality"],
         )
 
-    st.divider()
+    st.subheader("Metadata")
+    strip_meta = st.checkbox("Strip metadata", value=True)
 
-    # Images per page
+# Images per page
     st.subheader("Images per Page")
     ipp_choice = st.radio(
         "images_per_page",
@@ -285,9 +300,7 @@ with st.sidebar:
     else:
         ipp = int(ipp_choice)
 
-    st.divider()
-
-    # Export format
+# Export format
     st.subheader("Export Format")
     want_pdf = st.checkbox("PDF", value=True)
     want_html = st.checkbox("HTML (printable)", value=False)
@@ -324,13 +337,13 @@ if uploaded:
         else:
             with st.spinner("Generating…"):
                 st.session_state.pdf_data = (
-                    generate_pdf(images, ipp, comp_level) if want_pdf else None
+                    generate_pdf(images, ipp, comp_level, strip_meta) if want_pdf else None
                 )
                 st.session_state.html_data = (
-                    generate_html(images, ipp, comp_level) if want_html else None
+                    generate_html(images, ipp, comp_level, strip_meta) if want_html else None
                 )
                 st.session_state.docx_data = (
-                    generate_docx(images, ipp, comp_level) if want_docx else None
+                    generate_docx(images, ipp, comp_level, strip_meta) if want_docx else None
                 )
                 st.session_state.generated = True
 
