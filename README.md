@@ -16,34 +16,6 @@
 | 🔄 **EXIF auto-rotation** | Fixes sideways phone photos automatically |
 | 👁️ **Live preview** | Inline HTML layout preview before downloading |
 
----
-
-## 📸 Preview
-
-```
-┌────────────────────────────────┐
-│         Sidebar                │
-│  ─────────────────────────     │
-│  Compression                   │
-│  ☑ Enable Compression          │
-│    ● Low   ○ Medium   ○ High   │
-│                                │
-│  Images per Page               │
-│    ○ 1   ● 2   ○ 4   ○ Other  │
-│                                │
-│  Export Format                 │
-│  ☑ PDF  ☐ HTML  ☐ DOCX        │
-│                                │        Main Area
-│  ┌──────────────────────────┐  │
-│  │  Drop images here...     │  │
-│  └──────────────────────────┘  │
-│  [ img1 ] [ img2 ] [ img3 ]    │
-│                                │
-│  [      Generate      ]        │
-│                                │
-│  ⬇ Download PDF                │
-└────────────────────────────────┘
-```
 
 ---
 
