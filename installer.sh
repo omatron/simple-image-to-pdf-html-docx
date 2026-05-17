@@ -29,11 +29,16 @@ echo "→  Installing dependencies (this may take a minute)..."
 # Make the launcher executable
 chmod +x run.command
 
+# Create Desktop shortcut
+SHORTCUT="$HOME/Desktop/Image Organizer.command"
+ln -sf "$(pwd)/run.command" "$SHORTCUT"
+chmod +x "$SHORTCUT"
+
 echo ""
 echo "==============================="
 echo "  ✅ Installation complete!"
 echo ""
-echo "  To launch the app:"
-echo "  Double-click run.command"
+echo "  A shortcut was added to your Desktop."
+echo "  Double-click 'Image Organizer' to launch."
 echo "==============================="
 echo ""
