@@ -37,7 +37,7 @@ bash installer.sh
 
 **2. Launch**
 
-Double-click `run.command`. The browser opens automatically. Closing the Terminal window stops the app.
+Double-click the **Image Organizer** shortcut on your Desktop (created automatically by the installer). The browser opens automatically. Closing the Terminal window stops the app.
 
 ### Manual setup (any platform)
 
