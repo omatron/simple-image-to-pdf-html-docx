@@ -291,6 +291,7 @@ with st.sidebar:
     ipp_choice = st.radio(
         "images_per_page",
         ["1", "2", "4", "Other"],
+        index=2,
         label_visibility="collapsed",
     )
     if ipp_choice == "Other":
